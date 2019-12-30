@@ -1,0 +1,30 @@
+---
+# tasks file for builder
+- name: install git & mvn
+  apt: name={{item}} state=installed
+  with_items:
+    - git
+    - maven
+    - default-jdk
+
+- name: create dir for project
+  file:
+    path: /tmp/app_data
+    state: directory
+
+- name: git clone
+  git:
+    repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+    dest: /tmp/app_data
+
+- name: create artefact
+  shell:
+    mvn package -f /tmp/app_data
+
+#- name: copy artefact to webserver
+#  synchronize:
+ # copy: 
+#    src: /tmp/app_data/target/hello-1.0.war
+#    dest: /var/lib/tomcat8/webapps
+#    mode: push
+#  delegate_to: test

@@ -1,0 +1,32 @@
+---
+- name: webserver
+  hosts: test
+  become: yes
+  roles:
+   - prod
+
+- name: builder
+  hosts: builder
+  become: yes
+  roles:
+    - builder
+
+- name: copy from builder to master
+  hosts: builder
+  become: yes
+  tasks:
+    - name: copy from builder to master
+      fetch:
+         src=/tmp/app_data/target/hello-1.0.war 
+         dest=buffer/ 
+         flat=yes
+
+- name: copy from master to webserver
+  hosts: test      
+  become: yes
+  tasks: 
+    - name: copy from master to webserver
+      copy: 
+        src=buffer/hello-1.0.war 
+        dest=/var/lib/tomcat8/webapps/
+         
